@@ -63,7 +63,8 @@ class MainFragment : Fragment(R.layout.main_fragment), SurfaceHolder.Callback {
         val decoderName = findDecoderForFormat(format)
         decoder = MediaCodec.createByCodecName(decoderName)
 
-        // Configure the encoder
+        // Configure the decoder
+        // flags to 0 for decoding, CONFIGURE_FLAG_ENCODE for encoding
         decoder.configure(format, null, null, 0)
 
         log("Input format: ${decoder.inputFormat}")
