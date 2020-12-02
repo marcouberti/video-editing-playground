@@ -1,7 +1,10 @@
 package com.marcouberti.kodec.ui.main
 
-import android.media.*
+import android.media.MediaCodec
+import android.media.MediaExtractor
+import android.media.MediaFormat
 import android.os.Bundle
+import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
@@ -22,7 +25,16 @@ class MainFragment : Fragment(R.layout.main_fragment), SurfaceHolder.Callback {
 
     // preview surface
     lateinit var surfaceView: SurfaceView
+    private var surfaceAvailable = false
+
+    lateinit var extractor: MediaExtractor
     lateinit var decoder: MediaCodec
+    private var extractorDone = false
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        release()
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -33,14 +45,91 @@ class MainFragment : Fragment(R.layout.main_fragment), SurfaceHolder.Callback {
         super.onViewCreated(view, savedInstanceState)
 
         surfaceView = view.findViewById(R.id.preview)
+
         setupSurfaceView()
-        setupDecoderFromVideoSource(R.raw.paris_01_1080p)
     }
 
-    private fun setupDecoderFromVideoSource(@RawRes videoResId: Int) {
-        val extractor = MediaExtractor()
+    private fun onSurfaceAvailable(surface: Surface) {
+        val format = createDecoderFromVideoSource(R.raw.paris_01_1080p)
+        setupDecoderCallback()
+        configureDecoder(format, surface)
+        startDecoder()
+    }
+
+    private fun startDecoder() {
+        decoder.start()
+        log("startDecoder")
+    }
+
+    private fun setupDecoderCallback() {
+        // Use null to clear a previously set callback before configure
+        decoder.setCallback(null)
+        decoder.setCallback(object : MediaCodec.Callback() {
+            override fun onInputBufferAvailable(codec: MediaCodec, index: Int) {
+                log("onInputBufferAvailable index: $index")
+
+                if (extractorDone || !surfaceAvailable) {
+                    return
+                }
+
+                val buffer = codec.getInputBuffer(index) ?: return
+
+                val size: Int = extractor.readSampleData(buffer, 0)
+                val pts: Long = extractor.sampleTime
+
+                extractorDone = !extractor.advance()
+
+                if (size >= 0) {
+                    var flags = extractor.sampleFlags
+                    if (extractorDone) {
+                        log("extractor done")
+                        flags = MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                    }
+                    codec.queueInputBuffer(index, 0, size, pts, flags)
+                }
+            }
+
+            override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
+                log("onOutputBufferAvailable index: $index, info: $info")
+
+                if (extractorDone || !surfaceAvailable) {
+                    return
+                }
+
+                val image = codec.getOutputImage(index)
+
+                log("Image data: ${image?.width} x ${image?.height}")
+
+                if (info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG != 0) {
+                    codec.releaseOutputBuffer(index, false)
+                    return
+                }
+
+                val render = info.size != 0
+                codec.releaseOutputBuffer(index, render)
+
+                if (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) {
+                    log("received BUFFER_FLAG_END_OF_STREAM")
+                    release()
+                }
+            }
+
+            override fun onError(codec: MediaCodec, e: MediaCodec.CodecException) {
+                log("onError error: $e")
+            }
+
+            override fun onOutputFormatChanged(codec: MediaCodec, format: MediaFormat) {
+                log("onOutputFormatChanged format: $format")
+            }
+
+        })
+    }
+
+    private fun createDecoderFromVideoSource(@RawRes videoResId: Int): MediaFormat {
         var format = MediaFormat()
         var mimeType = ""
+
+        extractor = MediaExtractor()
 
         // Load file from raw directory
         val videoFd = this.resources.openRawResourceFd(videoResId)
@@ -57,15 +146,26 @@ class MainFragment : Fragment(R.layout.main_fragment), SurfaceHolder.Callback {
                 break
             }
         }
-        extractor.release()
+        //extractor.release()
         videoFd.close()
 
         val decoderName = findDecoderForFormat(format)
         decoder = MediaCodec.createByCodecName(decoderName)
 
+        return format
+    }
+
+    private fun release() {
+        log("release extractor")
+        extractor.release()
+        log("release decoder")
+        decoder.release()
+    }
+
+    private fun configureDecoder(format: MediaFormat, surface: Surface) {
         // Configure the decoder
         // flags to 0 for decoding, CONFIGURE_FLAG_ENCODE for encoding
-        decoder.configure(format, null, null, 0)
+        decoder.configure(format, surface, null, 0)
 
         log("Input format: ${decoder.inputFormat}")
         log("Output format: ${decoder.outputFormat}")
@@ -73,6 +173,22 @@ class MainFragment : Fragment(R.layout.main_fragment), SurfaceHolder.Callback {
 
     private fun setupSurfaceView() {
         surfaceView.holder.addCallback(this)
+        surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
+            override fun surfaceCreated(holder: SurfaceHolder) {
+                surfaceAvailable = true
+                onSurfaceAvailable(holder.surface)
+                log("onSurfaceAvailable")
+            }
+
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+            }
+
+            override fun surfaceDestroyed(holder: SurfaceHolder) {
+                surfaceAvailable = false
+                log("surfaceDestroyed")
+            }
+
+        })
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
@@ -83,5 +199,4 @@ class MainFragment : Fragment(R.layout.main_fragment), SurfaceHolder.Callback {
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
     }
-
 }
