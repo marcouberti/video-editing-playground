@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.marcouberti.kodec.R
 import com.marcouberti.kodec.findDecoderForFormat
+import com.marcouberti.kodec.log
 
 class MainFragment : Fragment(R.layout.main_fragment), SurfaceHolder.Callback {
 
@@ -64,8 +65,9 @@ class MainFragment : Fragment(R.layout.main_fragment), SurfaceHolder.Callback {
 
         // Configure the encoder
         decoder.configure(format, null, null, 0)
-        println("### Input format: ${decoder.inputFormat}")
-        println("### Output format: ${decoder.outputFormat}")
+
+        log("Input format: ${decoder.inputFormat}")
+        log("Output format: ${decoder.outputFormat}")
     }
 
     private fun setupSurfaceView() {
