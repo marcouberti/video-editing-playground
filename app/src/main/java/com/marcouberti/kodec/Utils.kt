@@ -22,6 +22,9 @@ fun selectEncoder(mimeType: String): MediaCodecInfo? {
     return null
 }
 
+/**
+ * Find a decoder for the given [MediaFormat].
+ */
 fun findDecoderForFormat(format: MediaFormat): String {
     return MediaCodecList(MediaCodecList.REGULAR_CODECS).findDecoderForFormat(format)
 }
