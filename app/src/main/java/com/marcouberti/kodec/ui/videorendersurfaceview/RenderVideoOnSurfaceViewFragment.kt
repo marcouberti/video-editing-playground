@@ -14,6 +14,11 @@ import com.marcouberti.kodec.R
 import com.marcouberti.kodec.findDecoderForFormat
 import com.marcouberti.kodec.log
 
+/**
+ * Decodes a mp4 file and renders it directly on a [SurfaceView].
+ *
+ * There is no fps speed control.
+ */
 class RenderVideoOnSurfaceViewFragment : Fragment(R.layout.render_video_surface_fragment) {
 
     companion object {

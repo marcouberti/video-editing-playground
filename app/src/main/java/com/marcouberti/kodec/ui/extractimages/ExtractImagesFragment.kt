@@ -12,6 +12,12 @@ import com.marcouberti.kodec.findDecoderForFormat
 import com.marcouberti.kodec.log
 import java.io.File
 
+/**
+ * Decodes a mp4 file and renders it on a SurfaceTexture (no UI/View), reads each frame
+ * [Image] and converts it to a [Bitmap].
+ *
+ * Then save the frames as PNGs (slow).
+ */
 class ExtractImagesFragment : Fragment(R.layout.extract_images_fragment) {
 
     lateinit var extractor: MediaExtractor

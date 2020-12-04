@@ -25,6 +25,14 @@
         <action
             android:id="@+id/action_mainFragment_to_imageFromDecoderFragment"
             app:destination="@id/imageFromDecoderFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_GLSurfaceViewFragment"
+            app:destination="@id/GLSurfaceViewFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/GLSurfaceViewFragment"
+        android:name="com.marcouberti.kodec.ui.gl.GLSurfaceViewFragment"
+        android:label="gl_surface_view_fragment"
+        tools:layout="@layout/gl_surface_view_fragment" />
 
 </navigation>
