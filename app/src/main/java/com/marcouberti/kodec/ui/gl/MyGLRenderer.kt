@@ -55,6 +55,9 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // Draw triangle
         mTriangle.draw(scratch)
+
+        // Draw square
+        mSquare.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
