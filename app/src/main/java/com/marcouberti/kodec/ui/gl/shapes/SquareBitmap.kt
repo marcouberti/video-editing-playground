@@ -7,22 +7,43 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
+
 private const val COORDS_PER_VERTEX = 3
 
 private var squareCoords = floatArrayOf(
-    -0.15f,  0.15f, 0.0f,      // top left
-    -0.15f, -0.15f, 0.0f,      // bottom left
-    0.15f, -0.15f, 0.0f,      // bottom right
-    0.15f,  0.15f, 0.0f       // top right
+    -0.5F, 0.5F, 0.0f,      // top left
+    -0.5F, -0.5F, 0.0f,      // bottom left
+    0.5F, -0.5F, 0.0f,      // bottom right
+    0.5F, 0.5F, 0.0f,       // top right
+)
+
+// S, T (or X, Y)
+// Texture coordinate data.
+// Because images have a Y axis pointing downward (values increase as you move down the image) while
+// OpenGL has a Y axis pointing upward, we adjust for that here by flipping the Y axis.
+// What's more is that the texture coordinates are the same for every face.
+private var textureCoords = floatArrayOf(
+    1.0f, 0.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
 )
 
 private var positionHandle: Int = 0
 private var mColorHandle: Int = 0
 
+/** This will be used to pass in the texture.  */
+private var mTextureUniformHandle = 0
+
+/** This will be used to pass in model texture coordinate information.  */
+private var mTextureCoordinateHandle = 0
+
 private val vertexCount: Int = squareCoords.size / COORDS_PER_VERTEX
 private val vertexStride: Int = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
-class Square {
+class SquareBitmap(
+    private val textureHandle: Int
+) {
 
     private val drawOrder = shortArrayOf(0, 1, 2, 0, 2, 3) // order to draw vertices
 
@@ -35,8 +56,17 @@ class Square {
         """
             uniform mat4 uMVPMatrix;
             attribute vec4 vPosition;
+            
+            // Per-vertex texture coordinate information we will pass in.
+            attribute vec2 a_TexCoordinate; 
+            
+            // This will be passed into the fragment shader.
+            varying vec2 v_TexCoordinate;   
+            
             void main() {  
                 gl_Position = uMVPMatrix * vPosition;
+                // Pass through the texture coordinate.
+                v_TexCoordinate = a_TexCoordinate.xy;
             }
         """
 
@@ -46,9 +76,19 @@ class Square {
     private val fragmentShaderCode =
         """
             precision mediump float;
+            
+            // The input color
             uniform vec4 vColor;
+            
+            // The input texture.
+            uniform sampler2D u_Texture;    
+            
+            // Interpolated texture coordinate per fragment.
+            varying vec2 v_TexCoordinate; 
+            
             void main() {
-                gl_FragColor = vColor;
+                // Multiply the color by texture value to get final output color.
+                gl_FragColor = texture2D(u_Texture, v_TexCoordinate);
             }
         """
 
@@ -73,7 +113,7 @@ class Square {
     }
 
     // Set color with red, green, blue and alpha (opacity) values
-    val color = floatArrayOf(1f, 0.5f, 0.2f, 1f)
+    val color = floatArrayOf(0.1f, 0.5f, 1f, 1f)
 
     // initialize vertex byte buffer for shape coordinates
     private val vertexBuffer: FloatBuffer =
@@ -82,6 +122,17 @@ class Square {
             order(ByteOrder.nativeOrder())
             asFloatBuffer().apply {
                 put(squareCoords)
+                position(0)
+            }
+        }
+
+    // initialize vertex byte buffer for texture coordinates
+    private val textureBuffer: FloatBuffer =
+        // (# of coordinate values * 4 bytes per float)
+        ByteBuffer.allocateDirect(textureCoords.size * 4).run {
+            order(ByteOrder.nativeOrder())
+            asFloatBuffer().apply {
+                put(textureCoords)
                 position(0)
             }
         }
@@ -104,7 +155,7 @@ class Square {
         // get handle to vertex shader's vPosition member
         positionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition").also {
 
-            // Enable a handle to the triangle vertices
+            // Enable a handle to the square vertices
             GLES20.glEnableVertexAttribArray(it)
 
             // Prepare the triangle coordinate data
@@ -124,16 +175,41 @@ class Square {
                 GLES20.glUniform4fv(colorHandle, 1, color, 0)
             }
 
+            mTextureUniformHandle = GLES20.glGetUniformLocation(mProgram, "u_Texture")
+            mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgram, "a_TexCoordinate")
+
+            // Set the active texture unit to texture unit 0.
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+
+            // Bind the texture to this unit.
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
+
+            GLES20.glVertexAttribPointer(
+                mTextureCoordinateHandle,
+                COORDS_PER_VERTEX,
+                GLES20.GL_FLOAT,
+                false,
+                vertexStride,
+                textureBuffer
+            )
+
+            GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle)
+
+            // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
+            GLES20.glUniform1i(mTextureUniformHandle, 0)
+
             // get handle to shape's transformation matrix
             vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix")
 
             // Pass the projection and view transformation to the shader
             GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0)
 
+
             // Draw the square
             GLES20.glDrawElements(
                 GLES20.GL_TRIANGLES, drawOrder.size,
-                GLES20.GL_UNSIGNED_SHORT, drawListBuffer)
+                GLES20.GL_UNSIGNED_SHORT, drawListBuffer
+            )
 
             // Disable vertex array
             GLES20.glDisableVertexAttribArray(it)

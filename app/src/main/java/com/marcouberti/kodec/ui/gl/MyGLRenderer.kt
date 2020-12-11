@@ -1,5 +1,8 @@
 package com.marcouberti.kodec.ui.gl
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -7,10 +10,16 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
+import androidx.core.content.ContextCompat
+import com.marcouberti.kodec.R
+import com.marcouberti.kodec.loadTexture
 import com.marcouberti.kodec.ui.gl.shapes.Square
+import com.marcouberti.kodec.ui.gl.shapes.SquareBitmap
 import com.marcouberti.kodec.ui.gl.shapes.Triangle
 
-class MyGLRenderer : GLSurfaceView.Renderer {
+class MyGLRenderer(
+    val context: Context
+) : GLSurfaceView.Renderer {
 
     // vPMatrix is an abbreviation for "Model View Projection Matrix"
     private val vPMatrix = FloatArray(16)
@@ -20,6 +29,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
     private lateinit var mTriangle: Triangle
     private lateinit var mSquare: Square
+    private lateinit var mSquareBitmap: SquareBitmap
 
     @Volatile
     var angle: Float = 0f
@@ -32,6 +42,9 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         mTriangle = Triangle()
         // initialize a square
         mSquare = Square()
+        // initialize a square with Bitmap
+        val textureHandle = loadTexture(context, R.drawable.splice_logo)
+        mSquareBitmap = SquareBitmap(textureHandle)
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -55,6 +68,9 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // Draw triangle
         mTriangle.draw(scratch)
+
+        // Draw square bitmap
+        mSquareBitmap.draw(scratch)
 
         // Draw square
         mSquare.draw(scratch)
