@@ -24,27 +24,31 @@ class Square {
 
     private val drawOrder = shortArrayOf(0, 1, 2, 0, 2, 3) // order to draw vertices
 
+    // This matrix member variable provides a hook to manipulate
+    // the coordinates of the objects that use this vertex shader
+    // the matrix must be included as a modifier of gl_Position
+    // Note that the uMVPMatrix factor *must be first* in order
+    // for the matrix multiplication product to be correct.
     private val vertexShaderCode =
-        // This matrix member variable provides a hook to manipulate
-        // the coordinates of the objects that use this vertex shader
-        "uniform mat4 uMVPMatrix;" +
-                "attribute vec4 vPosition;" +
-                "void main() {" +
-                // the matrix must be included as a modifier of gl_Position
-                // Note that the uMVPMatrix factor *must be first* in order
-                // for the matrix multiplication product to be correct.
-                "  gl_Position = uMVPMatrix * vPosition;" +
-                "}"
+        """
+            uniform mat4 uMVPMatrix;
+            attribute vec4 vPosition;
+            void main() {  
+                gl_Position = uMVPMatrix * vPosition;
+            }
+        """
 
     // Use to access and set the view transformation
     private var vPMatrixHandle: Int = 0
 
     private val fragmentShaderCode =
-        "precision mediump float;" +
-                "uniform vec4 vColor;" +
-                "void main() {" +
-                "  gl_FragColor = vColor;" +
-                "}"
+        """
+            precision mediump float;
+            uniform vec4 vColor;
+            void main() {
+                gl_FragColor = vColor;
+            }
+        """
 
     private var mProgram: Int
 
