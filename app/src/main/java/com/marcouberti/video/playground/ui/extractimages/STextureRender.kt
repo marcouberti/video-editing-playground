@@ -1,10 +1,10 @@
-package com.marcouberti.kodec.ui.extractimages
+package com.marcouberti.video.playground.ui.extractimages
 
 import android.graphics.SurfaceTexture
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.opengl.Matrix
-import com.marcouberti.kodec.log
+import com.marcouberti.video.playground.log
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer

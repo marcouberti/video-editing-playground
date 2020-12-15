@@ -1,11 +1,11 @@
-package com.marcouberti.kodec.ui.main
+package com.marcouberti.video.playground.ui.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
-import com.marcouberti.kodec.R
+import com.marcouberti.video.R
 
 class MainFragment : Fragment(R.layout.fragment_main) {
 

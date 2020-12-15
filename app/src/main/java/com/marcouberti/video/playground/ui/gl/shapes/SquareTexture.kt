@@ -1,7 +1,7 @@
-package com.marcouberti.kodec.ui.gl.shapes
+package com.marcouberti.video.playground.ui.gl.shapes
 
 import android.opengl.GLES20
-import com.marcouberti.kodec.ui.gl.loadShader
+import com.marcouberti.video.playground.ui.gl.loadShader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer

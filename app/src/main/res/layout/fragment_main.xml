@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".ui.main.MainFragment">
+    tools:context=".playground.ui.main.MainFragment">
 
     <Button
         android:id="@+id/button1"

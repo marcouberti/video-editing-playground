@@ -1,4 +1,4 @@
-package com.marcouberti.kodec.ui.gl
+package com.marcouberti.video.playground.ui.gl
 
 import android.content.Context
 import android.opengl.GLSurfaceView

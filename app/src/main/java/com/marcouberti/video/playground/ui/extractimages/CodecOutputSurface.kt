@@ -1,4 +1,4 @@
-package com.marcouberti.kodec.ui.extractimages
+package com.marcouberti.video.playground.ui.extractimages
 
 import android.graphics.Bitmap
 import android.graphics.SurfaceTexture
@@ -6,7 +6,7 @@ import android.opengl.EGL14
 import android.opengl.EGLConfig
 import android.opengl.GLES20
 import android.view.Surface
-import com.marcouberti.kodec.log
+import com.marcouberti.video.playground.log
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.io.IOException

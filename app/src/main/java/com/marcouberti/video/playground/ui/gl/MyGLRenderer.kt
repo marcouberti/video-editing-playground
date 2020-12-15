@@ -1,15 +1,15 @@
-package com.marcouberti.kodec.ui.gl
+package com.marcouberti.video.playground.ui.gl
 
 import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
-import com.marcouberti.kodec.R
-import com.marcouberti.kodec.loadTexture
-import com.marcouberti.kodec.ui.gl.shapes.Square
-import com.marcouberti.kodec.ui.gl.shapes.SquareBitmap
-import com.marcouberti.kodec.ui.gl.shapes.Triangle
+import com.marcouberti.video.R
+import com.marcouberti.video.playground.loadTexture
+import com.marcouberti.video.playground.ui.gl.shapes.Square
+import com.marcouberti.video.playground.ui.gl.shapes.SquareBitmap
+import com.marcouberti.video.playground.ui.gl.shapes.Triangle
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 

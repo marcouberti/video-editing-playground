@@ -7,16 +7,16 @@
 
     <fragment
         android:id="@+id/imageFromDecoderFragment"
-        android:name="com.marcouberti.kodec.ui.extractimages.ExtractImagesFragment"
+        android:name="com.marcouberti.video.playground.ui.extractimages.ExtractImagesFragment"
         android:label="ImageFromDecoderFragment" />
     <fragment
         android:id="@+id/renderVideoOnSurfaceViewFragment"
-        android:name="com.marcouberti.kodec.ui.videorendersurfaceview.RenderVideoOnSurfaceViewFragment"
+        android:name="com.marcouberti.video.playground.ui.videorendersurfaceview.RenderVideoOnSurfaceViewFragment"
         android:label="render_video_surface_fragment"
         tools:layout="@layout/render_video_surface_fragment" />
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.marcouberti.kodec.ui.main.MainFragment"
+        android:name="com.marcouberti.video.playground.ui.main.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/GLSurfaceViewFragment"
-        android:name="com.marcouberti.kodec.ui.gl.GLSurfaceViewFragment"
+        android:name="com.marcouberti.video.playground.ui.gl.GLSurfaceViewFragment"
         android:label="gl_surface_view_fragment"
         tools:layout="@layout/gl_surface_view_fragment" />
 

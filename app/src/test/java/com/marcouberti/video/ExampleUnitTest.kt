@@ -1,4 +1,4 @@
-package com.marcouberti.kodec
+package com.marcouberti.video
 
 import org.junit.Test
 

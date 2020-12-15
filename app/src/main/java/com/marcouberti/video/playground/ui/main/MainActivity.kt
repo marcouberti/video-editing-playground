@@ -1,8 +1,8 @@
-package com.marcouberti.kodec.ui.main
+package com.marcouberti.video.playground.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.marcouberti.kodec.R
+import com.marcouberti.video.R
 
 class MainActivity : AppCompatActivity() {
 

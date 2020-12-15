@@ -1,4 +1,4 @@
-package com.marcouberti.kodec
+package com.marcouberti.video.playground
 
 import android.content.Context
 import android.graphics.BitmapFactory

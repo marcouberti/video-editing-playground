@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.marcouberti.kodec"
+        applicationId "com.marcouberti.video.playground"
         minSdkVersion 22
         targetSdkVersion 30
         versionCode 1

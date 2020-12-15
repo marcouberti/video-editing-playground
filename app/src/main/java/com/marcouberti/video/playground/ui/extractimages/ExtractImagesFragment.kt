@@ -1,4 +1,4 @@
-package com.marcouberti.kodec.ui.extractimages
+package com.marcouberti.video.playground.ui.extractimages
 
 import android.media.MediaCodec
 import android.media.MediaExtractor
@@ -7,9 +7,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.RawRes
 import androidx.fragment.app.Fragment
-import com.marcouberti.kodec.R
-import com.marcouberti.kodec.findDecoderForFormat
-import com.marcouberti.kodec.log
+import com.marcouberti.video.R
+import com.marcouberti.video.playground.findDecoderForFormat
+import com.marcouberti.video.playground.log
 import java.io.File
 
 /**

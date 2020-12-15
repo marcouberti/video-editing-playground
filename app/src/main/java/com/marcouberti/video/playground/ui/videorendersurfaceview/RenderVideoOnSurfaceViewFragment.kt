@@ -1,4 +1,4 @@
-package com.marcouberti.kodec.ui.videorendersurfaceview
+package com.marcouberti.video.playground.ui.videorendersurfaceview
 
 import android.media.MediaCodec
 import android.media.MediaExtractor
@@ -10,9 +10,9 @@ import android.view.SurfaceView
 import android.view.View
 import androidx.annotation.RawRes
 import androidx.fragment.app.Fragment
-import com.marcouberti.kodec.R
-import com.marcouberti.kodec.findDecoderForFormat
-import com.marcouberti.kodec.log
+import com.marcouberti.video.R
+import com.marcouberti.video.playground.findDecoderForFormat
+import com.marcouberti.video.playground.log
 
 /**
  * Decodes a mp4 file and renders it directly on a [SurfaceView].
