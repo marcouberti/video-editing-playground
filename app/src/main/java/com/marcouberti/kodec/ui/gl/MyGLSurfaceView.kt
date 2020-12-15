@@ -24,7 +24,7 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
 
         // Render the view only when there is a change in the drawing data.
         // To allow the triangle to rotate automatically, this line is commented out:
-        renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+        // renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {

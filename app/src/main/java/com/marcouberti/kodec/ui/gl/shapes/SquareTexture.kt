@@ -31,6 +31,7 @@ private var textureCoords = floatArrayOf(
 
 private var positionHandle: Int = 0
 private var mColorHandle: Int = 0
+private var mTimeHandle: Int = 0
 
 /** This will be used to pass in the texture.  */
 private var mTextureUniformHandle = 0
@@ -77,18 +78,30 @@ class SquareBitmap(
         """
             precision mediump float;
             
+            // The time
+            uniform float u_time;
+            
             // The input color
-            uniform vec4 vColor;
+            uniform vec4 u_color;
             
             // The input texture.
             uniform sampler2D u_Texture;    
             
             // Interpolated texture coordinate per fragment.
-            varying vec2 v_TexCoordinate; 
+            varying vec2 v_TexCoordinate;
             
             void main() {
+                // rgb displacement
+                vec2 d = vec2(sin(u_time), cos(u_time));
+                
+                vec3 r = texture2D(u_Texture, v_TexCoordinate + d).rgb;
+                vec3 g = texture2D(u_Texture, v_TexCoordinate + d * 1.1).rgb;
+                vec3 b = texture2D(u_Texture, v_TexCoordinate + d * 1.2).rgb;
+                
+                vec3 glitch = vec3(r.r, g.g, b.b);
+            
                 // Multiply the color by texture value to get final output color.
-                gl_FragColor = texture2D(u_Texture, v_TexCoordinate);
+                gl_FragColor = vec4(glitch, 1.0);
             }
         """
 
@@ -148,7 +161,7 @@ class SquareBitmap(
             }
         }
 
-    fun draw(mvpMatrix: FloatArray) {
+    fun draw(mvpMatrix: FloatArray, seconds: Float) {
         // Add program to OpenGL ES environment
         GLES20.glUseProgram(mProgram)
 
@@ -169,10 +182,15 @@ class SquareBitmap(
             )
 
             // get handle to fragment shader's vColor member
-            mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor").also { colorHandle ->
+            mColorHandle = GLES20.glGetUniformLocation(mProgram, "u_color").also { colorHandle ->
 
                 // Set color for drawing the triangle
                 GLES20.glUniform4fv(colorHandle, 1, color, 0)
+            }
+
+            // get handle to fragment shader's time member
+            mTimeHandle = GLES20.glGetUniformLocation(mProgram, "u_time").also { timeHandle ->
+                GLES20.glUniform1f(timeHandle, seconds)
             }
 
             mTextureUniformHandle = GLES20.glGetUniformLocation(mProgram, "u_Texture")

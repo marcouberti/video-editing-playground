@@ -1,21 +1,17 @@
 package com.marcouberti.kodec.ui.gl
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import javax.microedition.khronos.egl.EGLConfig
-import javax.microedition.khronos.opengles.GL10
-
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
-import androidx.core.content.ContextCompat
 import com.marcouberti.kodec.R
 import com.marcouberti.kodec.loadTexture
 import com.marcouberti.kodec.ui.gl.shapes.Square
 import com.marcouberti.kodec.ui.gl.shapes.SquareBitmap
 import com.marcouberti.kodec.ui.gl.shapes.Triangle
+import javax.microedition.khronos.egl.EGLConfig
+import javax.microedition.khronos.opengles.GL10
 
 class MyGLRenderer(
     val context: Context
@@ -66,11 +62,15 @@ class MyGLRenderer(
         // for the matrix multiplication product to be correct.
         Matrix.multiplyMM(scratch, 0, vPMatrix, 0, rotationMatrix, 0)
 
+        // Time
+        val time = SystemClock.uptimeMillis().toShort()
+        val seconds = 0.001f * time.toInt()
+
         // Draw triangle
         mTriangle.draw(scratch)
 
         // Draw square bitmap
-        mSquareBitmap.draw(scratch)
+        mSquareBitmap.draw(scratch, seconds)
 
         // Draw square
         mSquare.draw(scratch)
