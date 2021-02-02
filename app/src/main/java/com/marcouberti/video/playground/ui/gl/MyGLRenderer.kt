@@ -7,6 +7,7 @@ import android.opengl.Matrix
 import android.os.SystemClock
 import com.marcouberti.video.R
 import com.marcouberti.video.playground.loadTexture
+import com.marcouberti.video.playground.ui.gl.shapes.Ellipse
 import com.marcouberti.video.playground.ui.gl.shapes.Square
 import com.marcouberti.video.playground.ui.gl.shapes.SquareBitmap
 import com.marcouberti.video.playground.ui.gl.shapes.Triangle
@@ -26,6 +27,7 @@ class MyGLRenderer(
     private lateinit var mTriangle: Triangle
     private lateinit var mSquare: Square
     private lateinit var mSquareBitmap: SquareBitmap
+    private lateinit var ellipse: Ellipse
 
     @Volatile
     var angle: Float = 0f
@@ -41,6 +43,8 @@ class MyGLRenderer(
         // initialize a square with Bitmap
         val textureHandle = loadTexture(context, R.drawable.splice_logo)
         mSquareBitmap = SquareBitmap(textureHandle)
+        // ellipse
+        ellipse = Ellipse()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -74,6 +78,9 @@ class MyGLRenderer(
 
         // Draw square
         mSquare.draw(scratch)
+
+        // Draw Ellipse
+        ellipse.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

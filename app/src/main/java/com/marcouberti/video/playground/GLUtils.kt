@@ -3,7 +3,9 @@ package com.marcouberti.video.playground
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.opengl.GLES20
+import android.opengl.GLES32
 import android.opengl.GLUtils
+import android.util.Log
 
 fun loadTexture(context: Context, resourceId: Int): Int {
     val textureHandle = IntArray(1)
@@ -20,14 +22,14 @@ fun loadTexture(context: Context, resourceId: Int): Int {
 
         // Set filtering
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MIN_FILTER,
-            GLES20.GL_NEAREST
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_NEAREST
         )
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MAG_FILTER,
-            GLES20.GL_NEAREST
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_NEAREST
         )
 
         // Load the bitmap into the bound texture.
@@ -40,4 +42,11 @@ fun loadTexture(context: Context, resourceId: Int): Int {
         throw RuntimeException("Error loading texture.")
     }
     return textureHandle[0]
+}
+
+fun checkGlError(glOperation: String) {
+    var error: Int
+    if (GLES32.glGetError().also { error = it } != GLES32.GL_NO_ERROR) {
+        Log.e("MyRenderer", "$glOperation: glError $error")
+    }
 }
