@@ -7,10 +7,7 @@ import android.opengl.Matrix
 import android.os.SystemClock
 import com.marcouberti.video.R
 import com.marcouberti.video.playground.loadTexture
-import com.marcouberti.video.playground.ui.gl.shapes.Ellipse
-import com.marcouberti.video.playground.ui.gl.shapes.Square
-import com.marcouberti.video.playground.ui.gl.shapes.SquareBitmap
-import com.marcouberti.video.playground.ui.gl.shapes.Triangle
+import com.marcouberti.video.playground.ui.gl.shapes.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -27,7 +24,8 @@ class MyGLRenderer(
     private lateinit var mTriangle: Triangle
     private lateinit var mSquare: Square
     private lateinit var mSquareBitmap: SquareBitmap
-    private lateinit var ellipse: Ellipse
+    private lateinit var mEllipse: Ellipse
+    private lateinit var mEllipseBorder: EllipseBorder
 
     @Volatile
     var angle: Float = 0f
@@ -44,7 +42,9 @@ class MyGLRenderer(
         val textureHandle = loadTexture(context, R.drawable.splice_logo)
         mSquareBitmap = SquareBitmap(textureHandle)
         // ellipse
-        ellipse = Ellipse()
+        mEllipse = Ellipse()
+        // ellipse border
+        mEllipseBorder = EllipseBorder()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -80,7 +80,10 @@ class MyGLRenderer(
         mSquare.draw(scratch)
 
         // Draw Ellipse
-        ellipse.draw(scratch)
+        mEllipse.draw(scratch)
+
+        // Draw ellipse border
+        mEllipseBorder.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

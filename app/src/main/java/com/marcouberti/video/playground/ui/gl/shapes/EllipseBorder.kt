@@ -9,9 +9,9 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 /**
- * Use GL_TRIANGLE_FAN to draw an ellipse.
+ * Use GL_POINT to draw an ellipse border.
  */
-class Ellipse {
+class EllipseBorder {
     private val vertexShaderCode =
         """
             attribute vec3 aVertexPosition;
@@ -20,7 +20,8 @@ class Ellipse {
             
             void main() {
                 gl_Position = uMVPMatrix *vec4(aVertexPosition,1.0);
-                vColor=vec4(0.0,1.0,0.0,1.0);
+                gl_PointSize=2.0;
+                vColor=vec4(0.5,0.0,0.0,1.0);
             }
             """.trimIndent()
     private val fragmentShaderCode =
@@ -38,6 +39,7 @@ class Ellipse {
     private val vertexCount // number of vertices
             : Int
 
+
     // number of coordinates per vertex in this array
     val COORDS_PER_VERTEX = 3
     var triangleVertex = mutableListOf<Float>()
@@ -51,25 +53,17 @@ class Ellipse {
         for (i in 0 until NUM_POINTS) {
             val angle = Math.toRadians(i.toDouble() / NUM_POINTS * 360.0)
             points.add(Pair(
-                (Math.cos(angle) * RADIUS).toFloat() * 0.2f,
-                (Math.sin(angle) * RADIUS).toFloat() * 0.3f // stretch the circle
+                (Math.cos(angle) * RADIUS).toFloat() * 0.1f,
+                (Math.sin(angle) * RADIUS).toFloat() * 0.2f // stretch the circle
             ))
         }
 
-        // add fan center
-        triangleVertex.add(0f)
-        triangleVertex.add(0f)
-        triangleVertex.add(1f)
-        // add tringles vertices
+        // add border vertices
         for (i in points.indices) {
             triangleVertex.add(points[i].first)
             triangleVertex.add(points[i].second)
             triangleVertex.add(1f)
         }
-        // close the fan
-        triangleVertex.add(points[0].first)
-        triangleVertex.add(points[0].second)
-        triangleVertex.add(1f)
     }
 
     fun draw(mvpMatrix: FloatArray?) {
@@ -91,7 +85,7 @@ class Ellipse {
             GLES32.GL_FLOAT, false, vertexStride, vertexBuffer
         )
         // Draw the triangle fan
-        GLES32.glDrawArrays(GLES32.GL_TRIANGLE_FAN, 0, vertexCount)
+        GLES32.glDrawArrays(GLES32.GL_POINTS, 0, vertexCount)
     }
 
     init {
