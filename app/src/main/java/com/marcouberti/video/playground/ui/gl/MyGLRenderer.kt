@@ -27,7 +27,7 @@ class MyGLRenderer(
     private lateinit var mEllipse: Ellipse
     private lateinit var mEllipseBorder: EllipseBorder
     private lateinit var mPyramid: Pyramid
-
+    private lateinit var mCube: Cube
 
     @Volatile
     var angle: Float = 0f
@@ -49,6 +49,8 @@ class MyGLRenderer(
         mEllipseBorder = EllipseBorder()
         // pyramid
         mPyramid = Pyramid()
+        // cube
+        mCube = Cube()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -91,6 +93,9 @@ class MyGLRenderer(
 
         // Draw Pyramid
         mPyramid.draw(scratch)
+
+        // Draw Cube
+        mCube.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

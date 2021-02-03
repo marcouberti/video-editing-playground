@@ -6,11 +6,12 @@ import com.marcouberti.video.playground.ui.gl.loadShader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.nio.IntBuffer
 
 /**
- * Draw a pyramid.
+ * Draw a cube using index buffer.
  */
-class Pyramid {
+class Cube {
     private val vertexShaderCode =
         """
             attribute vec3 aVertexPosition;
@@ -33,6 +34,7 @@ class Pyramid {
             """.trimIndent()
     private val vertexBuffer: FloatBuffer
     private val colorBuffer: FloatBuffer
+    private val indexBuffer: IntBuffer
     private val mProgram: Int
     private var mPositionHandle = 0
     private var mColorHandle = 0
@@ -47,34 +49,71 @@ class Pyramid {
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
     private val colorStride = COLOR_PER_VERTEX * 4 // 4 bytes per vertex
 
-    var pyramidVertex = floatArrayOf( // front face
-        -0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f,  // right face
-        -0.0f, 1.0f, 0.0f,
+    var cubeVertex = floatArrayOf( // front
+        0.0f, 0.0f, 1.0f,
+        0.0f, -1.0f, 1.0f,
         1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, -1.0f,  // back face
-        -0.0f, 1.0f, 0.0f,
-        1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,  // left face
-        -0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, 1.0f
+        1.0f, 0.0f, 1.0f,  // back
+        0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,  // top
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 0.0f,  // bottom
+        0.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 1.0f,
+        0.0f, -1.0f, 1.0f,  // right
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 0.0f,  // left
+        0.0f, 0.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,
+        0.0f, 0.0f, 1.0f
     )
 
-    var pyramidColor = floatArrayOf( // front face
-        -0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f,  // right face
-        -0.0f, 1.0f, 0.0f,
-        1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, -1.0f,  // back face
-        -0.0f, 1.0f, 0.0f,
-        1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,  // left face
-        -0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, 1.0f
+    var cubeIndex = intArrayOf(
+        0, 1, 2, 0, 2, 3,  // front face
+        4, 5, 6, 4, 6, 7,  // back face
+        8, 9, 10, 8, 10, 11,  // top face
+        12, 13, 14, 12, 14, 15,  // bottom face
+        16, 17, 18, 16, 18, 19,  // right face
+        20, 21, 22, 20, 22, 23 // left face
+    )
+
+    var cubeColor = floatArrayOf( // front face
+        -0.0f, 1.0f, 0.0f, 1.0f,
+        -0.0f, 1.0f, 0.0f, 1.0f,
+        -0.0f, 1.0f, 0.0f, 1.0f,
+        -0.0f, 1.0f, 0.0f, 1.0f,  // right face
+        1.0f, -0.0f, 0.0f, 1.0f,
+        1.0f, -0.0f, 0.0f, 1.0f,
+        1.0f, -0.0f, 0.0f, 1.0f,
+        1.0f, -0.0f, 0.0f, 1.0f,  // back face
+        -0.0f, 0.0f, 1.0f, 1.0f,
+        -0.0f, 0.0f, 1.0f, 1.0f,
+        -0.0f, 0.0f, 1.0f, 1.0f,
+        -0.0f, 0.0f, 1.0f, 1.0f,  // left face
+        0.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 1.0f, 1.0f,  // left face
+        1.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f, 1.0f,  // left face
+        1.0f, 0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 1.0f,  // left face
+        0.5f, 1.0f, 0.5f, 1.0f,
+        0.5f, 1.0f, 0.5f, 1.0f,
+        0.5f, 1.0f, 0.5f, 1.0f,
+        0.5f, 1.0f, 0.5f, 1.0f
     )
 
     fun draw(mvpMatrix: FloatArray?) {
@@ -108,25 +147,36 @@ class Pyramid {
             GLES32.GL_FLOAT, false, colorStride, colorBuffer
         )
         // Draw the triangle fan
-        GLES32.glDrawArrays(GLES32.GL_TRIANGLE_FAN, 0, vertexCount)
+        GLES32.glDrawElements(
+            GLES32.GL_TRIANGLES,
+            cubeIndex.size,
+            GLES32.GL_UNSIGNED_INT,
+            indexBuffer
+        )
     }
 
     init {
         // initialize vertex byte buffer for shape coordinates
-        val bb = ByteBuffer.allocateDirect(pyramidVertex.size * 4) // (# of coordinate values * 4 bytes per float)
+        val bb = ByteBuffer.allocateDirect(cubeVertex.size * 4) // (# of coordinate values * 4 bytes per float)
         bb.order(ByteOrder.nativeOrder())
         vertexBuffer = bb.asFloatBuffer()
-        vertexBuffer.put(pyramidVertex)
+        vertexBuffer.put(cubeVertex)
         vertexBuffer.position(0)
-        vertexCount = pyramidVertex.size / COORDS_PER_VERTEX
+        vertexCount = cubeVertex.size / COORDS_PER_VERTEX
 
         // initialise the color buffer
-        val cb = ByteBuffer.allocateDirect(pyramidColor.size * 4) // (# of coordinate values * 4 bytes per float)
+        val cb = ByteBuffer.allocateDirect(cubeColor.size * 4) // (# of coordinate values * 4 bytes per float)
 
         cb.order(ByteOrder.nativeOrder())
         colorBuffer = cb.asFloatBuffer()
-        colorBuffer.put(pyramidColor)
+        colorBuffer.put(cubeColor)
         colorBuffer.position(0)
+
+        // initialise the index buffer
+        val ib = IntBuffer.allocate(cubeIndex.size)
+        indexBuffer = ib
+        indexBuffer.put(cubeIndex)
+        indexBuffer.position(0)
 
         // prepare shaders and OpenGL program
         val vertexShader: Int = loadShader(GLES32.GL_VERTEX_SHADER, vertexShaderCode)
