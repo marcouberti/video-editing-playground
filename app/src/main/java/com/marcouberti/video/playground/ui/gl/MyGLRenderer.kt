@@ -26,6 +26,8 @@ class MyGLRenderer(
     private lateinit var mSquareBitmap: SquareBitmap
     private lateinit var mEllipse: Ellipse
     private lateinit var mEllipseBorder: EllipseBorder
+    private lateinit var mPyramid: Pyramid
+
 
     @Volatile
     var angle: Float = 0f
@@ -45,6 +47,8 @@ class MyGLRenderer(
         mEllipse = Ellipse()
         // ellipse border
         mEllipseBorder = EllipseBorder()
+        // pyramid
+        mPyramid = Pyramid()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -84,6 +88,9 @@ class MyGLRenderer(
 
         // Draw ellipse border
         mEllipseBorder.draw(scratch)
+
+        // Draw Pyramid
+        mPyramid.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
