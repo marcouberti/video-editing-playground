@@ -31,6 +31,7 @@ class MyGLRenderer(
     private lateinit var mPyramid: Pyramid
     private lateinit var mCube: Cube
     private lateinit var mSphere: Sphere
+    private lateinit var mTwoSphere: TwoSphere
 
     @Volatile
     var angle: Float = 0f
@@ -56,6 +57,8 @@ class MyGLRenderer(
         mCube = Cube()
         // sphere
         mSphere = Sphere()
+        // two sphere
+        mTwoSphere = TwoSphere()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -75,7 +78,7 @@ class MyGLRenderer(
                 0f, 0f, 0f,  //looks at the origin
                 0f, 1f, 0.0f) //head is down (set to (0,1,0) to look from the top)
 
-        Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -5f) //move backward for 5 units
+        Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -15f) //move backward for 5 units
         //Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix, 0)
 
         // Calculate the projection and view transformation
@@ -116,6 +119,9 @@ class MyGLRenderer(
 
         // Draw sphere
         mSphere.draw(scratch)
+
+        // Draw two sphere
+        mTwoSphere.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
@@ -125,7 +131,7 @@ class MyGLRenderer(
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 15f)
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 45f)
     }
 }
 
