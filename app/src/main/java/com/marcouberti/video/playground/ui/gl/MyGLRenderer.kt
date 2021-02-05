@@ -12,14 +12,16 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class MyGLRenderer(
-    val context: Context
+        val context: Context
 ) : GLSurfaceView.Renderer {
 
-    // vPMatrix is an abbreviation for "Model View Projection Matrix"
-    private val vPMatrix = FloatArray(16)
-    private val projectionMatrix = FloatArray(16)
-    private val viewMatrix = FloatArray(16)
-    private val rotationMatrix = FloatArray(16)
+    private val mMVPMatrix = FloatArray(16) //model view projection matrix
+    private val mViewMatrix = FloatArray(16) // view matrix
+    private val mProjectionMatrix = FloatArray(16) //projection mastrix
+    private val mModelMatrix = FloatArray(16) //model  matrix
+    private val mMVMatrix = FloatArray(16) //model view matrix
+    private val cameraRotationMatrix = FloatArray(16) // camera rotation matrix
+    private val mRotationMatrix = FloatArray(16) // model rotation matrix
 
     private lateinit var mTriangle: Triangle
     private lateinit var mSquare: Square
@@ -28,6 +30,7 @@ class MyGLRenderer(
     private lateinit var mEllipseBorder: EllipseBorder
     private lateinit var mPyramid: Pyramid
     private lateinit var mCube: Cube
+    private lateinit var mSphere: Sphere
 
     @Volatile
     var angle: Float = 0f
@@ -51,6 +54,8 @@ class MyGLRenderer(
         mPyramid = Pyramid()
         // cube
         mCube = Cube()
+        // sphere
+        mSphere = Sphere()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -59,18 +64,30 @@ class MyGLRenderer(
 
         val scratch = FloatArray(16)
 
+        Matrix.setIdentityM(mMVPMatrix, 0) //set the model view projection matrix to an identity matrix
+        Matrix.setIdentityM(mMVMatrix, 0) //set the model view  matrix to an identity matrix
+        Matrix.setIdentityM(mModelMatrix, 0) //set the model matrix to an identity matrix
+        //Matrix.setRotateM(mRotationMatrix, 0, 30f, 0f, 1f, 0f) //rotate around the y-axis
+
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+        Matrix.setLookAtM(mViewMatrix, 0,
+                0.0f, 0f, 1.0f,  //camera is at (0,0,1)
+                0f, 0f, 0f,  //looks at the origin
+                0f, 1f, 0.0f) //head is down (set to (0,1,0) to look from the top)
+
+        Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -5f) //move backward for 5 units
+        //Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix, 0)
 
         // Calculate the projection and view transformation
-        Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
-
-        Matrix.setRotateM(rotationMatrix, 0, angle, 0f, 0f, -1.0f)
+        //calculate the model view matrix
+        Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0)
 
         // Combine the rotation matrix with the projection and camera view
         // Note that the vPMatrix factor *must be first* in order
         // for the matrix multiplication product to be correct.
-        Matrix.multiplyMM(scratch, 0, vPMatrix, 0, rotationMatrix, 0)
+        Matrix.setRotateM(cameraRotationMatrix, 0, angle, 0f, 1f, 0.0f)
+        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, cameraRotationMatrix, 0)
 
         // Time
         val time = SystemClock.uptimeMillis().toShort()
@@ -96,6 +113,9 @@ class MyGLRenderer(
 
         // Draw Cube
         mCube.draw(scratch)
+
+        // Draw sphere
+        mSphere.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
@@ -105,7 +125,7 @@ class MyGLRenderer(
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 7f)
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 15f)
     }
 }
 
