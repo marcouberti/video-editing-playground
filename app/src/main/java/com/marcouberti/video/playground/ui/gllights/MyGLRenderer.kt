@@ -6,6 +6,7 @@ import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
 import com.marcouberti.video.playground.ui.gllights.shape.Sphere
+import com.marcouberti.video.playground.ui.gllights.shape.TwoSphere
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -18,10 +19,10 @@ class MyGLRenderer(
     private val mProjectionMatrix = FloatArray(16) //projection mastrix
     private val mModelMatrix = FloatArray(16) //model  matrix
     private val mMVMatrix = FloatArray(16) //model view matrix
-    private val cameraRotationMatrix = FloatArray(16) // camera rotation matrix
-    private val cameraRotationMatrix2 = FloatArray(16) // camera rotation matrix
     private val mRotationMatrix = FloatArray(16) // model rotation matrix
+    private val mRotationMatrix2 = FloatArray(16) // model rotation matrix
 
+    private lateinit var mTwoSphere: TwoSphere
     private lateinit var mSphere: Sphere
 
     @Volatile
@@ -34,6 +35,7 @@ class MyGLRenderer(
 
         // sphere
         mSphere = Sphere()
+        mTwoSphere = TwoSphere()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -54,26 +56,23 @@ class MyGLRenderer(
                 0f, 1f, 0.0f) //head is down (set to (0,1,0) to look from the top)
 
         Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -15f) //move backward for 5 units
-        //Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix, 0)
+        // Rotate the model
+        Matrix.setRotateM(mRotationMatrix, 0, angleX, 1f, 0f, 0.0f)
+        Matrix.setRotateM(mRotationMatrix2, 0, angleY, 0f, 1f, 0.0f)
+        Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix, 0)
+        Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix2, 0)
 
         // Calculate the projection and view transformation
         //calculate the model view matrix
         Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0)
-
-        // Combine the rotation matrix with the projection and camera view
-        // Note that the vPMatrix factor *must be first* in order
-        // for the matrix multiplication product to be correct.
-        Matrix.setRotateM(cameraRotationMatrix, 0, angleX, 1f, 0f, 0.0f)
-        Matrix.setRotateM(cameraRotationMatrix2, 0, angleY, 0f, 1f, 0.0f)
-        Matrix.multiplyMM(cameraRotationMatrix, 0, cameraRotationMatrix, 0, cameraRotationMatrix2, 0)
-        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, cameraRotationMatrix, 0)
+        Matrix.multiplyMM(scratch, 0, mProjectionMatrix, 0, mMVMatrix, 0)
 
         // Time
         val time = SystemClock.uptimeMillis().toShort()
         val seconds = 0.001f * time.toInt()
 
         // Draw sphere
+        mTwoSphere.draw(scratch)
         mSphere.draw(scratch)
     }
 
@@ -84,7 +83,7 @@ class MyGLRenderer(
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 45f)
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 150f)
     }
 }
 

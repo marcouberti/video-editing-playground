@@ -10,11 +10,11 @@ import java.nio.IntBuffer
 import java.util.*
 
 /**
- * Draw a sphere using index buffer.
+ * Draw two sphere filling the buffers and drawing sequentially.
  */
-class Sphere {
+class TwoSphere {
     private val vertexShaderCode =
-        """
+            """
             attribute vec3 aVertexPosition;
             uniform mat4 uMVPMatrix;
             varying vec4 vColor;
@@ -32,7 +32,7 @@ class Sphere {
             }
             """.trimIndent()
     private val fragmentShaderCode =
-        """
+            """
             precision mediump float;
             varying vec4 vColor; 
             varying float vPointLightWeighting;
@@ -40,15 +40,21 @@ class Sphere {
                 gl_FragColor = vec4(vColor.xyz*vPointLightWeighting,1);
             }
             """.trimIndent()
+    
     private val vertexBuffer: FloatBuffer
     private val colorBuffer: FloatBuffer
     private val indexBuffer: IntBuffer
+
+    private val vertexBuffer2: FloatBuffer
+    private val colorBuffer2: FloatBuffer
+    private val indexBuffer2: IntBuffer
+    
     private val mProgram: Int
     private var mPositionHandle = 0
     private var mPointLightLocationHandle = 0
     private var mColorHandle = 0
     private var mMVPMatrixHandle = 0
-    private val vertexCount // number of vertices
+    private var vertexCount // number of vertices
             : Int
 
     // number of coordinates per vertex in this array
@@ -59,19 +65,29 @@ class Sphere {
     private val colorStride = COLOR_PER_VERTEX * 4 // 4 bytes per vertex
 
     private lateinit var SphereVertex: FloatArray
-    private lateinit var SphereIndex: IntArray
-    private lateinit var SphereColor: FloatArray
+    private lateinit var  SphereIndex: IntArray
+    private lateinit var  SphereColor: FloatArray
 
-    private val pointLightLocation = floatArrayOf(2f, 2f, 0f)
+    private lateinit var Sphere2Vertex: FloatArray
+    private lateinit var  Sphere2Index: IntArray
+    private lateinit var  Sphere2Color: FloatArray
+
+    private val pointLightLocation = floatArrayOf(10f, 10f, 0f)
 
     private fun createSphere(radius: Float, nolatitude: Int, nolongitude: Int) {
         val vertices = FloatArray(65535)
         val index = IntArray(65535)
         val color = FloatArray(65535)
+        val vertices2 = FloatArray(65535)
+        val index2 = IntArray(65535)
+        val color2 = FloatArray(65535)
         var vertedindex = 0
         var colorindex = 0
         var indx = 0
-        val dist = 0f
+        var vertedindex2 = 0
+        var colorindex2 = 0
+        var indx2 = 0
+        val dist = 3f
         for (row in 0 until nolatitude + 1) {
             val theta = row * Math.PI / nolatitude
             val sinTheta = Math.sin(theta)
@@ -87,10 +103,17 @@ class Sphere {
                 vertices[vertedindex++] = (radius * x).toFloat()
                 vertices[vertedindex++] = (radius * cosTheta).toFloat() + dist
                 vertices[vertedindex++] = (radius * z).toFloat()
-                color[colorindex++] = 1f
+                vertices2[vertedindex2++] = (radius * x).toFloat()
+                vertices2[vertedindex2++] = (radius * cosTheta).toFloat() - dist
+                vertices2[vertedindex2++] = (radius * z).toFloat()
+                color[colorindex++] = Math.abs(tcolor)
+                color[colorindex++] = 1 - Math.abs(tcolor)
                 color[colorindex++] = 0f
                 color[colorindex++] = 0f
-                color[colorindex++] = 0f
+                color2[colorindex2++] = 0f
+                color2[colorindex2++] = 1f
+                color2[colorindex2++] = Math.abs(tcolor)
+                color2[colorindex2++] = 0f
                 tcolor += tcolorinc
             }
         }
@@ -106,6 +129,12 @@ class Sphere {
                 index[indx++] = P1
                 index[indx++] = P1 + 1
                 index[indx++] = P0 + 1
+                index2[indx2++] = P0
+                index2[indx2++] = P1
+                index2[indx2++] = P0 + 1
+                index2[indx2++] = P1
+                index2[indx2++] = P1 + 1
+                index2[indx2++] = P0 + 1
             }
         }
 
@@ -113,6 +142,9 @@ class Sphere {
         SphereVertex = Arrays.copyOf(vertices, vertedindex)
         SphereIndex = Arrays.copyOf(index, indx)
         SphereColor = Arrays.copyOf(color, colorindex)
+        Sphere2Vertex = Arrays.copyOf(vertices2, vertedindex2)
+        Sphere2Index = Arrays.copyOf(index2, indx2)
+        Sphere2Color = Arrays.copyOf(color2, colorindex2)
     }
 
     fun draw(mvpMatrix: FloatArray?) {
@@ -127,32 +159,30 @@ class Sphere {
         // Enable a handle to the triangle color
         GLES32.glEnableVertexAttribArray(mColorHandle)
 
-        // get handle to point light position
-        mPointLightLocationHandle = GLES32.glGetUniformLocation(mProgram, "uPointLightingLocation")
-
         // get handle to shape's transformation matrix
         mMVPMatrixHandle = GLES32.glGetUniformLocation(mProgram, "uMVPMatrix")
         checkGlError("glGetUniformLocation")
 
-        // Apply the projection and view transformation
-        GLES32.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
-        checkGlError("glUniformMatrix4fv")
-
+        // get handle to point light position
+        mPointLightLocationHandle = GLES32.glGetUniformLocation(mProgram, "uPointLightingLocation")
         // set point light location
         GLES32.glUniform3fv(mPointLightLocationHandle, 1, pointLightLocation, 0)
 
-        // set the attribute of the vertex to point to the vertex buffer
+        // Apply the projection and view transformation
+        GLES32.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
+        checkGlError("glUniformMatrix4fv")
+        //set the attribute of the vertex to point to the vertex buffer
         GLES32.glVertexAttribPointer(
                 mPositionHandle, COORDS_PER_VERTEX,
                 GLES32.GL_FLOAT, false, vertexStride, vertexBuffer
         )
 
-        // set the attribute of the vertex colors to point to the color buffer
+        //set the attribute of the vertex colors to point to the color buffer
         GLES32.glVertexAttribPointer(
                 mColorHandle, COLOR_PER_VERTEX,
                 GLES32.GL_FLOAT, false, colorStride, colorBuffer
         )
-        // Draw
+        // Draw the triangle fan
         GLES32.glDrawElements(
                 GLES32.GL_TRIANGLES,
                 //GLES32.GL_LINES,
@@ -160,10 +190,30 @@ class Sphere {
                 GLES32.GL_UNSIGNED_INT,
                 indexBuffer
         )
+
+        //set the attribute of the vertex to point to the vertex buffer
+        GLES32.glVertexAttribPointer(
+                mPositionHandle, COORDS_PER_VERTEX,
+                GLES32.GL_FLOAT, false, vertexStride, vertexBuffer2
+        )
+
+        //set the attribute of the vertex colors to point to the color buffer
+        GLES32.glVertexAttribPointer(
+                mColorHandle, COLOR_PER_VERTEX,
+                GLES32.GL_FLOAT, false, colorStride, colorBuffer2
+        )
+        // Draw the triangle fan
+        GLES32.glDrawElements(
+                GLES32.GL_TRIANGLES,
+                //GLES32.GL_LINES,
+                Sphere2Index.size,
+                GLES32.GL_UNSIGNED_INT,
+                indexBuffer2
+        )
     }
 
     init {
-        createSphere(1f, 100, 100)
+        createSphere(1f, 30, 30)
 
         // initialize vertex byte buffer for shape coordinates
         val bb = ByteBuffer.allocateDirect(SphereVertex.size * 4) // (# of coordinate values * 4 bytes per float)
@@ -186,6 +236,27 @@ class Sphere {
         indexBuffer = ib
         indexBuffer.put(SphereIndex)
         indexBuffer.position(0)
+
+        // initialize vertex byte buffer for shape coordinates
+
+        // initialize vertex byte buffer for shape coordinates
+        val bb2 = ByteBuffer.allocateDirect(Sphere2Vertex.size * 4) // (# of coordinate values * 4 bytes per float)
+        bb2.order(ByteOrder.nativeOrder())
+        vertexBuffer2 = bb2.asFloatBuffer()
+        vertexBuffer2.put(Sphere2Vertex)
+        vertexBuffer2.position(0)
+        vertexCount = Sphere2Vertex.size / COORDS_PER_VERTEX
+        
+        val cb2 = ByteBuffer.allocateDirect(Sphere2Color.size * 4) // (# of coordinate values * 4 bytes per float)
+        cb2.order(ByteOrder.nativeOrder())
+        colorBuffer2 = cb2.asFloatBuffer()
+        colorBuffer2.put(Sphere2Color)
+        colorBuffer2.position(0)
+        
+        val ib2 = IntBuffer.allocate(Sphere2Index.size)
+        indexBuffer2 = ib2
+        indexBuffer2.put(Sphere2Index)
+        indexBuffer2.position(0)
 
         // prepare shaders and OpenGL program
         val vertexShader: Int = loadShader(GLES32.GL_VERTEX_SHADER, vertexShaderCode)
