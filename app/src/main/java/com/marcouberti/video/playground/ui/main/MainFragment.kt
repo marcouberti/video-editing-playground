@@ -23,5 +23,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         view.findViewById<Button>(R.id.button3).setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_GLSurfaceViewFragment)
         }
+
+        view.findViewById<Button>(R.id.button4).setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_GLLightingFragment)
+        }
     }
 }

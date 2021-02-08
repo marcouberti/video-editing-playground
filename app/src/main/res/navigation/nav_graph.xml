@@ -28,11 +28,19 @@
         <action
             android:id="@+id/action_mainFragment_to_GLSurfaceViewFragment"
             app:destination="@id/GLSurfaceViewFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_GLLightingFragment"
+            app:destination="@id/GLLightingFragment" />
     </fragment>
     <fragment
         android:id="@+id/GLSurfaceViewFragment"
         android:name="com.marcouberti.video.playground.ui.gl.GLSurfaceViewFragment"
         android:label="gl_surface_view_fragment"
         tools:layout="@layout/gl_surface_view_fragment" />
+    <fragment
+        android:id="@+id/GLLightingFragment"
+        android:name="com.marcouberti.video.playground.ui.gllights.GLLightingFragment"
+        android:label="GLLightingFragment"
+        tools:layout="@layout/gl_lighting_fragment"/>
 
 </navigation>

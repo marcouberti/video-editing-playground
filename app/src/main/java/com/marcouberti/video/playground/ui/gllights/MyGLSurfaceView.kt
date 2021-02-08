@@ -1,4 +1,4 @@
-package com.marcouberti.video.playground.ui.gl
+package com.marcouberti.video.playground.ui.gllights
 
 import android.content.Context
 import android.opengl.GLSurfaceView

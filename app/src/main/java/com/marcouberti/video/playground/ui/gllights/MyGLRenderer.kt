@@ -1,13 +1,11 @@
-package com.marcouberti.video.playground.ui.gl
+package com.marcouberti.video.playground.ui.gllights
 
 import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
-import com.marcouberti.video.R
-import com.marcouberti.video.playground.loadTexture
-import com.marcouberti.video.playground.ui.gl.shapes.*
+import com.marcouberti.video.playground.ui.gllights.shape.Sphere
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -24,44 +22,18 @@ class MyGLRenderer(
     private val cameraRotationMatrix2 = FloatArray(16) // camera rotation matrix
     private val mRotationMatrix = FloatArray(16) // model rotation matrix
 
-    private lateinit var mTriangle: Triangle
-    private lateinit var mSquare: Square
-    private lateinit var mSquareBitmap: SquareBitmap
-    private lateinit var mEllipse: Ellipse
-    private lateinit var mEllipseBorder: EllipseBorder
-    private lateinit var mPyramid: Pyramid
-    private lateinit var mCube: Cube
     private lateinit var mSphere: Sphere
-    private lateinit var mTwoSphere: TwoSphere
 
     @Volatile
     var angleX: Float = 0f
-    @Volatile
     var angleY: Float = 0f
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // Set the background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
-        // initialize a triangle
-        mTriangle = Triangle()
-        // initialize a square
-        mSquare = Square()
-        // initialize a square with Bitmap
-        val textureHandle = loadTexture(context, R.drawable.splice_logo)
-        mSquareBitmap = SquareBitmap(textureHandle)
-        // ellipse
-        mEllipse = Ellipse()
-        // ellipse border
-        mEllipseBorder = EllipseBorder()
-        // pyramid
-        mPyramid = Pyramid()
-        // cube
-        mCube = Cube()
         // sphere
         mSphere = Sphere()
-        // two sphere
-        mTwoSphere = TwoSphere()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -101,32 +73,8 @@ class MyGLRenderer(
         val time = SystemClock.uptimeMillis().toShort()
         val seconds = 0.001f * time.toInt()
 
-        // Draw triangle
-        mTriangle.draw(scratch)
-
-        // Draw square bitmap
-        mSquareBitmap.draw(scratch, seconds)
-
-        // Draw square
-        mSquare.draw(scratch)
-
-        // Draw Ellipse
-        mEllipse.draw(scratch)
-
-        // Draw ellipse border
-        mEllipseBorder.draw(scratch)
-
-        // Draw Pyramid
-        mPyramid.draw(scratch)
-
-        // Draw Cube
-        mCube.draw(scratch)
-
         // Draw sphere
         mSphere.draw(scratch)
-
-        // Draw two sphere
-        mTwoSphere.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

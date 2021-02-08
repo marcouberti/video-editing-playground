@@ -1,4 +1,4 @@
-package com.marcouberti.video.playground.ui.gl.shapes
+package com.marcouberti.video.playground.ui.gllights.shape
 
 import android.opengl.GLES32
 import com.marcouberti.video.playground.checkGlError
@@ -77,8 +77,8 @@ class Sphere {
                 vertices[vertedindex++] = (radius * x).toFloat()
                 vertices[vertedindex++] = (radius * cosTheta).toFloat() + dist
                 vertices[vertedindex++] = (radius * z).toFloat()
-                color[colorindex++] = Math.abs(tcolor)
-                color[colorindex++] = 1 - Math.abs(tcolor)
+                color[colorindex++] = 1f
+                color[colorindex++] = 0f
                 color[colorindex++] = 0f
                 color[colorindex++] = 0f
                 tcolor += tcolorinc
@@ -137,8 +137,8 @@ class Sphere {
         )
         // Draw
         GLES32.glDrawElements(
-                //GLES32.GL_TRIANGLES,
-                GLES32.GL_LINES,
+                GLES32.GL_TRIANGLES,
+                //GLES32.GL_LINES,
                 SphereIndex.size,
                 GLES32.GL_UNSIGNED_INT,
                 indexBuffer

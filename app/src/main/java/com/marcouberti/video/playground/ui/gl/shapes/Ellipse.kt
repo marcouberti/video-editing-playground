@@ -3,7 +3,7 @@ package com.marcouberti.video.playground.ui.gl.shapes
 import android.opengl.GLES32
 import android.util.Pair
 import com.marcouberti.video.playground.checkGlError
-import com.marcouberti.video.playground.ui.gl.loadShader
+import com.marcouberti.video.playground.ui.gllights.loadShader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
