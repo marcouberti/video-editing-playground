@@ -2,6 +2,7 @@ package com.marcouberti.video.playground.ui.gl
 
 import android.content.Context
 import android.opengl.GLES20
+import android.opengl.GLES32
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
@@ -66,7 +67,10 @@ class MyGLRenderer(
 
     override fun onDrawFrame(unused: GL10) {
         // Redraw background color
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT or GLES32.GL_DEPTH_BUFFER_BIT)
+        GLES32.glClearDepthf(1.0f) //set up the depth buffer
+        GLES32.glEnable(GLES32.GL_DEPTH_TEST) //enable depth test (so, it will not look through the surfaces)
+        GLES32.glDepthFunc(GLES32.GL_LEQUAL) //indicate what type of depth test
 
         val scratch = FloatArray(16)
 
