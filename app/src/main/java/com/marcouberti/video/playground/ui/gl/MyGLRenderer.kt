@@ -34,6 +34,7 @@ class MyGLRenderer(
     private lateinit var mCube: Cube
     private lateinit var mSphere: Sphere
     private lateinit var mTwoSphere: TwoSphere
+    private lateinit var mSphereTexture: SphereTexture
 
     @Volatile
     var angleX: Float = 0f
@@ -63,6 +64,8 @@ class MyGLRenderer(
         mSphere = Sphere()
         // two sphere
         mTwoSphere = TwoSphere()
+        // sphere texture
+        mSphereTexture = SphereTexture(context)
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -131,6 +134,9 @@ class MyGLRenderer(
 
         // Draw two sphere
         mTwoSphere.draw(scratch)
+
+        // Draw sphere texture
+        mSphereTexture.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
