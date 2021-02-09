@@ -35,6 +35,8 @@ class MyGLRenderer(
     private lateinit var mTwoSphere: TwoSphere
     private lateinit var mSphereTexture: SphereTexture
 
+    private var blendingEnabled = false
+
     @Volatile
     var angleX: Float = 0f
     @Volatile
@@ -71,8 +73,18 @@ class MyGLRenderer(
         // Redraw background color
         GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT or GLES32.GL_DEPTH_BUFFER_BIT)
         GLES32.glClearDepthf(1.0f) //set up the depth buffer
-        GLES32.glEnable(GLES32.GL_DEPTH_TEST) //enable depth test (so, it will not look through the surfaces)
         GLES32.glDepthFunc(GLES32.GL_LEQUAL) //indicate what type of depth test
+        if(blendingEnabled) {
+            GLES32.glBlendFunc(GLES32.GL_ONE,GLES32.GL_ONE_MINUS_SRC_ALPHA)
+            GLES32.glBlendEquation(GLES32.GL_FUNC_ADD)
+            GLES32.glEnable(GLES32.GL_BLEND)  //enable blending
+            // No culling of back faces
+            GLES20.glDisable(GLES20.GL_CULL_FACE)
+            // No depth testing
+            GLES20.glDisable(GLES20.GL_DEPTH_TEST)
+        } else {
+            GLES20.glEnable(GLES20.GL_DEPTH_TEST)
+        }
 
         val scratch = FloatArray(16)
 
@@ -119,17 +131,17 @@ class MyGLRenderer(
         // Draw ellipse border
         mEllipseBorder.draw(scratch)
 
-        // Draw Pyramid
-        mPyramid.draw(scratch)
-
-        // Draw Cube
-        mCube.draw(scratch)
-
         // Draw sphere
         mSphere.draw(scratch)
 
         // Draw two sphere
         mTwoSphere.draw(scratch)
+
+        // Draw Pyramid
+        mPyramid.draw(scratch)
+
+        // Draw Cube
+        mCube.draw(scratch)
 
         // Translate the model
         Matrix.translateM(mModelMatrix, 0, 2.0f, 0.0f, 0f) // translate

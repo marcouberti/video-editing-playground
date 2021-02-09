@@ -52,8 +52,8 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
                     dy *= -1
                 }
 
-                renderer.angleX += dx * TOUCH_SCALE_FACTOR_W
-                renderer.angleY += dy * TOUCH_SCALE_FACTOR_H
+                renderer.angleY += dx * TOUCH_SCALE_FACTOR_W
+                renderer.angleX += dy * TOUCH_SCALE_FACTOR_H
                 requestRender()
             }
         }

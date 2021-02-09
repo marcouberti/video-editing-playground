@@ -63,18 +63,18 @@ class Pyramid {
     )
 
     var pyramidColor = floatArrayOf( // front face
-        -0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f,  // right face
-        -0.0f, 1.0f, 0.0f,
-        1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, -1.0f,  // back face
-        -0.0f, 1.0f, 0.0f,
-        1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,  // left face
-        -0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, 1.0f
+        -0.0f, 1.0f, 0.0f, 0.2f,
+        1.0f, 0.0f, 0.0f, 0.2f,
+        1.0f, 0.0f, 0.0f,  0.2f, // right face
+        -0.0f, 1.0f, 0.0f, 0.2f,
+        1.0f, 0.0f, 0.0f, 0.2f,
+        1.0f, 0.0f, 0.0f, 0.2f,  // back face
+        -0.0f, 1.0f, 0.0f, 0.2f,
+        1.0f, 0.0f, 0.0f, 0.2f,
+        1.0f, 0.0f, 0.0f,  0.2f, // left face
+        -0.0f, 1.0f, 0.0f, 0.2f,
+        1.0f, 0.0f, 0.0f, 0.2f,
+        1.0f, 0.0f, 0.0f, 0.2f,
     )
 
     fun draw(mvpMatrix: FloatArray?) {
