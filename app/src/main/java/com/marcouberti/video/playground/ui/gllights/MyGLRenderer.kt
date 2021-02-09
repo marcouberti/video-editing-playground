@@ -51,7 +51,6 @@ class MyGLRenderer(
         Matrix.setIdentityM(mMVPMatrix, 0) //set the model view projection matrix to an identity matrix
         Matrix.setIdentityM(mMVMatrix, 0) //set the model view  matrix to an identity matrix
         Matrix.setIdentityM(mModelMatrix, 0) //set the model matrix to an identity matrix
-        //Matrix.setRotateM(mRotationMatrix, 0, 30f, 0f, 1f, 0f) //rotate around the y-axis
 
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0,
@@ -60,6 +59,7 @@ class MyGLRenderer(
                 0f, 1f, 0.0f) //head is down (set to (0,1,0) to look from the top)
 
         Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -15f) //move backward for 5 units
+
         // Rotate the model
         Matrix.setRotateM(mRotationMatrix, 0, angleX, 1f, 0f, 0.0f)
         Matrix.setRotateM(mRotationMatrix2, 0, angleY, 0f, 1f, 0.0f)
@@ -67,7 +67,6 @@ class MyGLRenderer(
         Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix2, 0)
 
         // Calculate the projection and view transformation
-        //calculate the model view matrix
         Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
         Matrix.multiplyMM(scratch, 0, mProjectionMatrix, 0, mMVMatrix, 0)
 

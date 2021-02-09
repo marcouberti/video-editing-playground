@@ -21,9 +21,8 @@ class MyGLRenderer(
     private val mProjectionMatrix = FloatArray(16) //projection mastrix
     private val mModelMatrix = FloatArray(16) //model  matrix
     private val mMVMatrix = FloatArray(16) //model view matrix
-    private val cameraRotationMatrix = FloatArray(16) // camera rotation matrix
-    private val cameraRotationMatrix2 = FloatArray(16) // camera rotation matrix
-    private val mRotationMatrix = FloatArray(16) // model rotation matrix
+    private val mRotationMatrix = FloatArray(16) // camera rotation matrix
+    private val mRotationMatrix2 = FloatArray(16) // camera rotation matrix
 
     private lateinit var mTriangle: Triangle
     private lateinit var mSquare: Square
@@ -84,25 +83,22 @@ class MyGLRenderer(
 
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0,
-                0.0f, 0f, 1.0f,  //camera is at (0,0,1)
+                0.0f, 0f, 15.0f,  //camera is at (0,0,15)
                 0f, 0f, 0f,  //looks at the origin
                 0f, 1f, 0.0f) //head is down (set to (0,1,0) to look from the top)
 
-        Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -15f) //move backward for 5 units
-        //Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix, 0)
+        // Rotate the model
+        Matrix.setRotateM(mRotationMatrix, 0, angleX, 1f, 0f, 0.0f)
+        Matrix.setRotateM(mRotationMatrix2, 0, angleY, 0f, 1f, 0.0f)
+        Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix, 0)
+        Matrix.multiplyMM(mModelMatrix, 0, mModelMatrix, 0, mRotationMatrix2, 0)
+
+        // Translate the model
+        Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, 0f) // don't translate
 
         // Calculate the projection and view transformation
-        //calculate the model view matrix
         Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0)
-
-        // Combine the rotation matrix with the projection and camera view
-        // Note that the vPMatrix factor *must be first* in order
-        // for the matrix multiplication product to be correct.
-        Matrix.setRotateM(cameraRotationMatrix, 0, angleX, 1f, 0f, 0.0f)
-        Matrix.setRotateM(cameraRotationMatrix2, 0, angleY, 0f, 1f, 0.0f)
-        Matrix.multiplyMM(cameraRotationMatrix, 0, cameraRotationMatrix, 0, cameraRotationMatrix2, 0)
-        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, cameraRotationMatrix, 0)
+        Matrix.multiplyMM(scratch, 0, mProjectionMatrix, 0, mMVMatrix, 0)
 
         // Time
         val time = SystemClock.uptimeMillis().toShort()
@@ -134,6 +130,13 @@ class MyGLRenderer(
 
         // Draw two sphere
         mTwoSphere.draw(scratch)
+
+        // Translate the model
+        Matrix.translateM(mModelMatrix, 0, 2.0f, 0.0f, 0f) // translate
+
+        // Calculate the projection and view transformation
+        Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
+        Matrix.multiplyMM(scratch, 0, mProjectionMatrix, 0, mMVMatrix, 0)
 
         // Draw sphere texture
         mSphereTexture.draw(scratch)

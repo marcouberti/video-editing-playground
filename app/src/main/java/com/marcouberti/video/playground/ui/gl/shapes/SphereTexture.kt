@@ -90,7 +90,7 @@ class SphereTexture(context: Context) {
         var vertedindex = 0
         var colorindex = 0
         var indx = 0
-        val dist = 1f
+        val dist = 0f
         for (row in 0 until nolatitude + 1) {
             val theta = row * Math.PI / nolatitude
             val sinTheta = Math.sin(theta)
