@@ -7,3 +7,4 @@ Playing with [Android Media Codec](https://developer.android.com/reference/andro
 - point lights
 - touch control and animations
 - textures
+- blending and transparency
