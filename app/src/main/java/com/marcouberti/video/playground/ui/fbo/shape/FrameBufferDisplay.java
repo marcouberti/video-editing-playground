@@ -13,20 +13,21 @@ import static com.marcouberti.video.playground.ui.fbo.MyGLRendererKt.loadShader;
 
 public class FrameBufferDisplay {
     private final String vertexShaderCode =
-            "attribute vec3 aVertexPosition;" + "uniform mat4 uMVPMatrix;" +
-                    "attribute vec4 aVertexColor;" +
+            "attribute vec3 aVertexPosition;" +
+                    "uniform mat4 uMVPMatrix;" +
                     "attribute vec2 aTextureCoordinate; " +//texture coordinate
                     "varying vec2 vTextureCoordinate;" +
                     "void main() {" +
                     "gl_Position = uMVPMatrix *vec4(aVertexPosition,1.0);" +
                     "vTextureCoordinate=aTextureCoordinate;" +
                     "}";
-    private final String fragmentShaderCode = "precision lowp float;" +
+    private final String fragmentShaderCode =
+            "precision lowp float;" +
             "varying vec2 vTextureCoordinate;" +
             "uniform sampler2D uTextureSampler;" +//texture
             "void main() {" +
             "vec4 fragmentColor=texture2D(uTextureSampler,vec2(vTextureCoordinate.s,vTextureCoordinate.t));" +//load the color texture
-            "gl_FragColor=vec4(fragmentColor.rgb,fragmentColor.a);" +//the fragment color
+            "gl_FragColor=vec4(fragmentColor.rgb,fragmentColor.a);" +
             "}";
     private final FloatBuffer vertexBuffer;
     private final IntBuffer indexBuffer;
@@ -53,10 +54,10 @@ public class FrameBufferDisplay {
     // to draw the FB we use a Plane
     static float DisplayVertex[] = {
             //front face
-            -1.0f, -1.0f, 1.0f,
-            1.0f, -1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            -1.0f, 1.0f, 1.0f,};
+            -1.0f, -1.0f, 0.0f,
+            1.0f, -1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            -1.0f, 1.0f, 0.0f,};
     static int DisplayIndex[] = {
             0, 1, 2, 0, 2, 3,//front face
     };
@@ -107,7 +108,7 @@ public class FrameBufferDisplay {
         TextureHandle = GLES32.glGetUniformLocation(mProgram, "uTextureSampler");//texture
         mMVPMatrixHandle = GLES32.glGetUniformLocation(mProgram, "uMVPMatrix");
 
-        width = pwidth / 2; // set the width to be half of the screen size
+        width = pwidth; // /2 set the width to be half of the screen size
         height = pheight;
         float ratio = (float) width / height;
         float left = -ratio;
@@ -131,11 +132,14 @@ public class FrameBufferDisplay {
         GLES32.glUniform1i(TextureHandle,1);//tell the uniform sampler to use this texture i
         GLES32.glVertexAttribPointer(mTextureCoordHandle,TEXTURE_PER_VERTEX, GLES32.GL_FLOAT,false,textureStride,textureBuffer);
         //set the attribute of the vertex to point to the vertex buffer
+        GLES32.glEnableVertexAttribArray(mPositionHandle);
         GLES32.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX,
                 GLES32.GL_FLOAT, false, vertexStride, vertexBuffer);
         // Draw the 2D plane
 
         GLES32.glDrawElements(GLES32.GL_TRIANGLES,DisplayIndex.length, GLES32.GL_UNSIGNED_INT,indexBuffer);
+        // Disable vertex array
+        GLES32.glDisableVertexAttribArray(mPositionHandle);
     }
 
     public void initaliseTexture(int whichTexture, int textureID, int width, int height, int pixel_format, int type) {
@@ -149,12 +153,10 @@ public class FrameBufferDisplay {
     }
 
     public void CreateFrameBuffers(int width, int height) {
-        GLES32.glGenTextures(1, frameBufferTextureID, 0);//generate 2 texture objects
         GLES32.glGenFramebuffers(1, frameBuffer, 0);//generate a framebuffer object
-        //bind the framebuffer for drawing
-        GLES32.glBindFramebuffer(GLES32.GL_DRAW_FRAMEBUFFER, frameBuffer[0]);
-        //initialise texture (i.e. glActivateTextgure...glBindTexture...glTexImage2D....)
+        GLES32.glGenTextures(1, frameBufferTextureID, 0);//generate a texture objects to store the color image
         initaliseTexture(GLES32.GL_TEXTURE1, frameBufferTextureID[0], width, height, GLES32.GL_RGBA, GLES32.GL_UNSIGNED_BYTE);
+        GLES32.glBindFramebuffer(GLES32.GL_DRAW_FRAMEBUFFER, frameBuffer[0]);
         GLES32.glFramebufferTexture2D(GLES32.GL_FRAMEBUFFER, GLES32.GL_COLOR_ATTACHMENT0, GLES32.GL_TEXTURE_2D, frameBufferTextureID[0], 0);
         GLES32.glGenRenderbuffers(1, renderBuffer, 0);
         GLES32.glBindRenderbuffer(GLES32.GL_RENDERBUFFER, renderBuffer[0]);

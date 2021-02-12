@@ -27,6 +27,7 @@ class MyGLRenderer(
 
     private lateinit var mSquare: SquareBitmap
 
+
     @Volatile
     var angleX: Float = 0f
 
@@ -97,7 +98,7 @@ class MyGLRenderer(
             val pviewmatrix = FloatArray(16)
 
             Matrix.setLookAtM(pviewmatrix, 0,
-                    0.0f, 0f, 9.0f,  //camera is at (0,0,5)
+                    0.0f, 0f, 5.0f,  //camera is at (0,0,5)
                     0f, 0f, 0f,  //looks at the origin
                     0f, 1f, 0.0f) //head is down (set to (0,1,0) to look from the top)
 
@@ -109,7 +110,8 @@ class MyGLRenderer(
             // 3 - Draw the FBO on the screen (as a Plane with a texture)
             GLES32.glViewport(0, 0, viewPortWidth, viewPortHeigh) // set the viewport size
             Matrix.setIdentityM(mModelMatrix, 0) //set the model matrix to an identity matrix
-            Matrix.scaleM(mModelMatrix, 0, fbo.width.toFloat() / fbo.height.toFloat(), 1f, 1f)
+            Matrix.translateM(mModelMatrix, 0, 0f, 0f, -10f)
+            Matrix.scaleM(mModelMatrix, 0, 10f, 10f, 1f)
             Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
             Matrix.multiplyMM(scratch, 0, mProjectionMatrix, 0, mMVMatrix, 0)
             fbo.draw(scratch)
