@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_mainFragment_to_GLLightingFragment"
             app:destination="@id/GLLightingFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_FBOFragment"
+            app:destination="@id/FBOFragment" />
     </fragment>
     <fragment
         android:id="@+id/GLSurfaceViewFragment"
@@ -42,5 +45,9 @@
         android:name="com.marcouberti.video.playground.ui.gllights.GLLightingFragment"
         android:label="GLLightingFragment"
         tools:layout="@layout/gl_lighting_fragment"/>
+    <fragment
+        android:id="@+id/FBOFragment"
+        android:name="com.marcouberti.video.playground.ui.fbo.FBOFragment"
+        android:label="FBOFragment" />
 
 </navigation>
