@@ -8,3 +8,4 @@ Playing with [Android Media Codec](https://developer.android.com/reference/andro
 - touch control and animations
 - textures
 - blending and transparency
+- frame buffers (FBO)
