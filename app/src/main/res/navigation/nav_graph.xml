@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_mainFragment_to_FBOFragment"
             app:destination="@id/FBOFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_TransformationsFragment"
+            app:destination="@id/TransformationsFragment" />
     </fragment>
     <fragment
         android:id="@+id/GLSurfaceViewFragment"
@@ -49,5 +52,9 @@
         android:id="@+id/FBOFragment"
         android:name="com.marcouberti.video.playground.ui.fbo.FBOFragment"
         android:label="FBOFragment" />
+    <fragment
+        android:id="@+id/TransformationsFragment"
+        android:name="com.marcouberti.video.playground.ui.transformations.TransformationsFragment"
+        android:label="TransformationsFragment" />
 
 </navigation>

@@ -41,4 +41,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Frame Buffers" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Transformations" />
 </LinearLayout>
