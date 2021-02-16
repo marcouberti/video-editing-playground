@@ -3,6 +3,7 @@ Playing with [Android Media Codec](https://developer.android.com/reference/andro
 
 - 2D shapes
 - 3D shapes 
+- quaternions and transformations
 - index buffer, vertex buffer, color buffer
 - point lights
 - touch control and animations
