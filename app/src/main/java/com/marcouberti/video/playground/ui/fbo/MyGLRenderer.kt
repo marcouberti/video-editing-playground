@@ -27,7 +27,6 @@ class MyGLRenderer(
 
     private lateinit var mSquare: SquareBitmap
 
-
     @Volatile
     var angleX: Float = 0f
 
