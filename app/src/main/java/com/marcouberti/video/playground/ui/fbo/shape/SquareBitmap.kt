@@ -92,7 +92,7 @@ class SquareBitmap(
             
             void main() {
                 // rgb displacement
-                vec2 d = vec2(sin(u_time), cos(u_time));
+                vec2 d = vec2(0.0, 0.0); //vec2(sin(u_time), cos(u_time));
                 
                 vec3 r = texture2D(u_Texture, v_TexCoordinate + d).rgb;
                 vec3 g = texture2D(u_Texture, v_TexCoordinate + d * 1.1).rgb;

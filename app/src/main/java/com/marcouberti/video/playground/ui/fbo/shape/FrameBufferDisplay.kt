@@ -9,6 +9,10 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
+/**
+ * We create a Frame Buffer to draw in as a texture.
+ * Later we can draw this texture using a Plane.
+ */
 class FrameBufferDisplay(pwidth: Int, pheight: Int) {
 
     private val vertexShaderCode = """
@@ -42,7 +46,6 @@ class FrameBufferDisplay(pwidth: Int, pheight: Int) {
     private val mMVPMatrixHandle: Int
     private val TextureHandle: Int
 
-    //--------
     var frameBuffer: IntArray
     var frameBufferTextureID: IntArray
     var width: Int
@@ -51,6 +54,7 @@ class FrameBufferDisplay(pwidth: Int, pheight: Int) {
     var mProjMatrix = FloatArray(16) //projection matrix
     private val textureStride = TEXTURE_PER_VERTEX * 4 //bytes per texture coordinates
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
+    
     fun draw(mMVPMatrix: FloatArray?) {
         GLES32.glUseProgram(mProgram) // Add program to OpenGL environment
         // Apply the projection and view transformation
@@ -151,7 +155,7 @@ class FrameBufferDisplay(pwidth: Int, pheight: Int) {
         GLES32.glVertexAttribPointer(mTextureCoordHandle, TEXTURE_PER_VERTEX, GLES32.GL_FLOAT, false, textureStride, textureBuffer)
         TextureHandle = GLES32.glGetUniformLocation(mProgram, "uTextureSampler") //texture
         mMVPMatrixHandle = GLES32.glGetUniformLocation(mProgram, "uMVPMatrix")
-        
+
         width = pwidth // /2 set the width to be half of the screen size
         height = pheight
 

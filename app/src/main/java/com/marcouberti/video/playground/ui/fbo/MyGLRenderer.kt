@@ -39,7 +39,7 @@ class MyGLRenderer(
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // Set the background frame color
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+        GLES20.glClearColor(1.0f, 0.0f, 1.0f, 1.0f)
 
         // initialize a square with Bitmap
         val textureHandle = loadTexture(context, R.drawable.splice_logo)
@@ -110,7 +110,7 @@ class MyGLRenderer(
             GLES32.glViewport(0, 0, viewPortWidth, viewPortHeigh) // set the viewport size
             Matrix.setIdentityM(mModelMatrix, 0) //set the model matrix to an identity matrix
             Matrix.translateM(mModelMatrix, 0, 0f, 0f, -10f)
-            Matrix.scaleM(mModelMatrix, 0, 10f, 10f, 1f)
+            Matrix.scaleM(mModelMatrix, 0, 5f, 5f, 1f)
             Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
             Matrix.multiplyMM(scratch, 0, mProjectionMatrix, 0, mMVMatrix, 0)
             fbo.draw(scratch)
