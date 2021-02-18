@@ -33,7 +33,11 @@ class FrameBufferDisplay(pwidth: Int, pheight: Int) {
         uniform sampler2D uTextureSampler;
         void main() {
             vec4 fragmentColor=texture2D(uTextureSampler,vec2(vTextureCoordinate.s,vTextureCoordinate.t));
-            gl_FragColor=vec4(fragmentColor.rgb,fragmentColor.a);
+            if(fragmentColor.rgb == vec3(1.0, 0.0, 1.0)) {
+                gl_FragColor=vec4(1.0, 0.0, 0.0, 1.0);
+            } else {
+                gl_FragColor=vec4(fragmentColor.rgb,fragmentColor.a);
+            }
         }
         """.trimIndent()
 
@@ -54,7 +58,7 @@ class FrameBufferDisplay(pwidth: Int, pheight: Int) {
     var mProjMatrix = FloatArray(16) //projection matrix
     private val textureStride = TEXTURE_PER_VERTEX * 4 //bytes per texture coordinates
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
-    
+
     fun draw(mMVPMatrix: FloatArray?) {
         GLES32.glUseProgram(mProgram) // Add program to OpenGL environment
         // Apply the projection and view transformation
@@ -108,10 +112,10 @@ class FrameBufferDisplay(pwidth: Int, pheight: Int) {
 
         // to draw the FB we use a Plane
         var DisplayVertex = floatArrayOf( //front face
-                -1.0f, -1.0f, 0.0f,
-                1.0f, -1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                -1.0f, 1.0f, 0.0f)
+                -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                0.5f, 0.5f, 0.0f,
+                -0.5f, 0.5f, 0.0f)
         var DisplayIndex = intArrayOf(
                 0, 1, 2, 0, 2, 3)
         var DisplayTextureCoords = floatArrayOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f)

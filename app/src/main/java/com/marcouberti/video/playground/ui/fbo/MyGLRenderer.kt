@@ -109,8 +109,16 @@ class MyGLRenderer(
             // 3 - Draw the FBO on the screen (as a Plane with a texture)
             GLES32.glViewport(0, 0, viewPortWidth, viewPortHeigh) // set the viewport size
             Matrix.setIdentityM(mModelMatrix, 0) //set the model matrix to an identity matrix
-            Matrix.translateM(mModelMatrix, 0, 0f, 0f, -10f)
-            Matrix.scaleM(mModelMatrix, 0, 5f, 5f, 1f)
+            Matrix.translateM(mModelMatrix, 0, 0f, 1f, -10f)
+            //Matrix.scaleM(mModelMatrix, 0, 5f, 5f, 1f)
+            Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
+            Matrix.multiplyMM(scratch, 0, mProjectionMatrix, 0, mMVMatrix, 0)
+            fbo.draw(scratch)
+
+            // 4 - Draw the FBO on the screen again (as a Plane with a texture)
+            GLES32.glViewport(0, 0, viewPortWidth, viewPortHeigh) // set the viewport size
+            Matrix.setIdentityM(mModelMatrix, 0) //set the model matrix to an identity matrix
+            Matrix.translateM(mModelMatrix, 0, 0f, -1f, -7f)
             Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
             Matrix.multiplyMM(scratch, 0, mProjectionMatrix, 0, mMVMatrix, 0)
             fbo.draw(scratch)
@@ -135,7 +143,7 @@ class MyGLRenderer(
             ratio = height.toFloat() / width.toFloat()
             Matrix.orthoM(mProjectionMatrix, 0, -1f, 1f, -ratio, ratio, -10f, 200f)
         }
-        mFBO = FrameBufferDisplay(width, height)
+        mFBO = FrameBufferDisplay(width, width) // FIXME height
     }
 }
 
